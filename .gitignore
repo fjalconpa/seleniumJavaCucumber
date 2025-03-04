@@ -6,3 +6,9 @@ build
 
 target/
 target/cucumber-reports
+
+# Ignore all .class files
+*.class
+
+# Ignore the .gitignore file itself
+.gitignore

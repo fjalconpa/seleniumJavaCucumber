@@ -8,6 +8,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -15,7 +16,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class BasePage {
-    
+
     /*
      * Declaración de una variable estática 'driver' de tipo WebDriver
      * Esta variable va a ser compartida por todas las instancias de BasePage y sus
@@ -29,70 +30,87 @@ public class BasePage {
      * WebDriverWait se usa para poner esperas explícitas en los elementos web
      */
     WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+
+    Actions action = new Actions(driver);
     /*
      * Configura el WebDriver para Chrome usando WebDriverManager.
      * WebDriverManager va a estar descargando y configurando automáticamente el
      * driver del navegador
      */
-    static{
+    static {
         WebDriverManager.chromedriver().setup();
-        // Inicializa la variable estática 'driver' con una instancia de ChromeDriver        
+        // Inicializa la variable estática 'driver' con una instancia de ChromeDriver
         driver = new ChromeDriver();
     }
 
-    /*
-     * Este es el constructor de BasePage que acepta un objeto WebDriver como
-     * argumento.
-     */
-    public BasePage(WebDriver driver){
+    public BasePage(WebDriver driver) {
         BasePage.driver = driver;
     }
 
-    // Método estático para navegar a una URL.
-    public static void navigateTo(String url){
+    public static void navigateTo(String url) {
         driver.get(url);
     }
 
-    // Método estático para cerrar el navegador.
+    public static void goToLinkText(String pageNumber) {
+        driver.findElement(By.linkText(pageNumber)).click();
+    }
+
     public static void closeBrowser() {
         driver.quit();
     }
 
-    // Método para encontrar un elemento web.
-    private WebElement find(String locator){
+    public String textFromElement(String locator) {
+        return find(locator).getText();
+    }
+
+    private WebElement find(String locator) {
         return wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(locator)));
     }
 
-    // Método para hacer clic en un elemento web.
-    public void clickElement(String locator){
+    public void clickElement(String locator) {
         find(locator).click();
     }
 
-    // Método para escribir en un elemento web.
-    public void write(String locator, String keysToSend){
+    public void write(String locator, String keysToSend) {
         find(locator).clear();
         find(locator).sendKeys(keysToSend);
     }
 
-    // metodo para seleccionar un elemento de un dropDown por el valor
     public void selectFromDropdownByValue(String locator, String value) {
         Select dropdown = new Select(find(locator));
 
         dropdown.selectByValue(value);
     }
 
-    // metodo para seleccionar un elemento de un dropDown por el indice
     public void selectFromDropdownByIndex(String locator, Integer index) {
         Select dropdown = new Select(find(locator));
 
         dropdown.selectByIndex(index);
     }
 
+    public void selectFromDropdownByText(String locator, String valueToSelect) {
+        Select dropdown = new Select(find(locator));
+
+        dropdown.selectByValue(valueToSelect);
+    }
+
+    public void hoverOverElement(String locator) {
+        action.moveToElement(find(locator));
+    }
+
+    public void doubleClick(String locator) {
+        action.doubleClick(find(locator));
+    }
+
+    public void rightClick(String locator) {
+        action.contextClick(find(locator));
+    }
+
     public int dropDownSize(String locator) {
         Select dropdown = new Select(find(locator));
 
         List<WebElement> droptDownOptions = dropdown.getOptions();
-        
+
         return droptDownOptions.size();
     }
 
@@ -101,7 +119,7 @@ public class BasePage {
 
         List<WebElement> dropDownOptions = dropdown.getOptions();
         List<String> dropDownValues = new ArrayList<String>();
-        
+
         for (WebElement option : dropDownOptions) {
             dropDownValues.add(option.getText());
         }

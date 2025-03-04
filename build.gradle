@@ -8,6 +8,7 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
+    id 'java'
 }
 
 repositories {
@@ -25,7 +26,6 @@ dependencies {
     // https://mvnrepository.com/artifact/io.github.bonigarcia/webdrivermanager
     implementation 'io.github.bonigarcia:webdrivermanager:5.9.2'
 
-
     // https://mvnrepository.com/artifact/org.testng/testng
     testImplementation 'org.testng:testng:7.10.2'
 
@@ -34,8 +34,13 @@ dependencies {
 
     // https://mvnrepository.com/artifact/io.cucumber/cucumber-junit
     testImplementation 'io.cucumber:cucumber-junit:7.20.1'
-
+    
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // Añadir la dependencia de RestAssured
+    // https://mvnrepository.com/artifact/io.rest-assured/rest-assured
+    testImplementation 'io.rest-assured:rest-assured:4.4.0'
+
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -46,5 +51,7 @@ java {
 }
 
 tasks.named('test') {
-    systemProperty "cucumber.options", System.getProperty("cucumber.options")
+    systemProperty "cucumber.options",
+    System.getProperty("cucumber.options")
+    systemProperties System.getProperties();
 }
